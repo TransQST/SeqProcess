@@ -2,6 +2,12 @@
 ## Script for NGS data processing (TransQST) #####
 ##################################################
 ###### Parameters set by user ####################
+
+##Export and set tool paths
+export PATH=$PATH:/share/tools/FastQC_v0.11.4/
+export PATH=$PATH:/share/tools/Trimmomatic-0.33/
+export PATH=$PATH:/share/tools/RSEM-1.3.1/
+BOAPTH=/share/tools/bowtie-1.1.1/
 CPU=30
 
 #File containing sample names
@@ -62,8 +68,6 @@ done
 
 ##### RUNNING TRIMMING AND PIPING DIRECTLY INTO TO RSEM ######################## 
 echo "Trimming, alignment and qualification is starting..."
-export PATH=$PATH:/share/tools/FastQC_v0.11.4/
-export PATH=$PATH:/share/tools/Trimmomatic-0.33/
 PREFIX=cat_
 SUFFIX_R1=_R1.fastq
 SUFFIX_R2=_R2.fastq
@@ -80,11 +84,11 @@ for i in $allfiles; do
 cd ${CATDIR}
 echo "Trimming Sample $i"
 DATE1="$(date -u +%s)"
-java -Xms2G -Xmx3G -jar /share/tools/Trimmomatic-0.33/trimmomatic-0.33.jar PE -threads ${CPU} -phred33 ${PREFIX}$i${SUFFIX_R1}.gz ${PREFIX}$i${SUFFIX_R2}.gz ${TRIMDIR}${PREFIX}$i${FORWARD_P}.gz ${TRIMDIR}${PREFIX}$i${FORWARD_U}.gz ${TRIMDIR}${PREFIX}$i${REVERSE_P}.gz ${TRIMDIR}${PREFIX}$i${REVERSE_U}.gz ILLUMINACLIP:/share/tools/Trimmomatic-0.33/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36 HEADCROP:12
+java -Xms2G -Xmx3G -jar trimmomatic-0.33.jar PE -threads ${CPU} -phred33 ${PREFIX}$i${SUFFIX_R1}.gz ${PREFIX}$i${SUFFIX_R2}.gz ${TRIMDIR}${PREFIX}$i${FORWARD_P}.gz ${TRIMDIR}${PREFIX}$i${FORWARD_U}.gz ${TRIMDIR}${PREFIX}$i${REVERSE_P}.gz ${TRIMDIR}${PREFIX}$i${REVERSE_U}.gz ILLUMINACLIP:/share/tools/Trimmomatic-0.33/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36 HEADCROP:12
 cd ${TRIMDIR}
 gunzip -k ${PREFIX}$i*.gz
 echo "Starting alignment of sample $i"
-/share/tools/RSEM-1.3.1/rsem-calculate-expression -p ${CPU} --bowtie-path /share/tools/bowtie-1.1.1 --bowtie-chunkmbs 1024 --paired-end ${PREFIX}$i${FORWARD_P} ${PREFIX}$i${REVERSE_P} ${TRANSCRIPTOME} ${PREFIX}$i >> ${PREFIX}$i.txt 2>&1
+rsem-calculate-expression -p ${CPU} --bowtie-path ${BOPATH} --bowtie-chunkmbs 1024 --paired-end ${PREFIX}$i${FORWARD_P} ${PREFIX}$i${REVERSE_P} ${TRANSCRIPTOME} ${PREFIX}$i >> ${PREFIX}$i.txt 2>&1
 mv ${PREFIX}$i${GENESN} ${GENES}
 mv ${PREFIX}$i${ISOFORMSN} ${ISOFORMS}
 mv ${PREFIX}$i${ALIGNMENTSN} ${ALIGNMENTS}
