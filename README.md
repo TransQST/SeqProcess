@@ -17,7 +17,7 @@ RSEM
 ```
 
 ## Input files
-It takes .fastq files as input.
+It takes .fastq files as input. Bowtie indices (prepared beforehand with a genome (.fa) and a coordinates gene file (.gtf) using rsem-prepare-reference function are necessary for alignment/quantification).
 
 ## Output
 1. Intermediate files (a copy of original files, trimmed .fastq files) 
