@@ -3,11 +3,10 @@
 
 ## Outline
 This shell script is to be used to process RNA-seq data (.fastq file format). The user should customize parameters described in the first part of the script.  
-Edited: version 2 (v2) does not contain a concatenation step (when reads are spread across multiple lanes during sequencing).
-The processing consists of 3 main steps:  
-1. Quality control with FastQC  
-2. Trimming of adapters and first 12 bases with Trimmomatic  
-3. Alignment with bowtie/bowtie2 and quantification with RSEM
+Edited: version 2 (v2) does not contain a concatenation step (when reads are spread across multiple lanes during sequencing) nor quality control.
+The processing consists of 2 main steps:   
+1. Trimming of adapters with Trimmomatic  
+2. Alignment with bowtie/bowtie2 and quantification with RSEM
 
 ## Prerequisites
 The script is suited for shell. Tools used:
