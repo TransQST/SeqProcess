@@ -23,10 +23,17 @@ TRIMDIR=/ngs-data-2/data/TransQST/${COMP}/${SPEC}/trimmed/
 #Path to QC output
 QCDIR1=/ngs-data-2/data/TransQST/${COMP}/${SPEC}/QC1_output/
 QCDIR2=/ngs-data-2/data/TransQST/${COMP}/${SPEC}/QC2_output/
-TRANSCRIPTOME=/ngs-data-2/analysis/TransQST/Genome/hs_genome_bt1/hs_93 
+#Set the genome based on the species
+if [ ${SPEC} == "human" ]; then 
+TRANSCRIPTOME=/ngs-data-2/analysis/TransQST/Genome/hs_genome_bt1/hs_93
+else 
+ TRANSCRIPTOME=/ngs-data-2/analysis/TransQST/Genome/mm_genome_bt1/mm_95
+fi
+#Directories for outputs
 ALIGNMENTS=/ngs-data-2/analysis/TransQST/${COMP}/${SPEC}/alignments/
 GENES=/ngs-data-2/analysis/TransQST/${COMP}/${SPEC}/genes_results/
 ISOFORMS=/ngs-data-2/analysis/TransQST/${COMP}/${SPEC}/isoforms_results/
+#Create directories
 mkdir -p ${RAWDIR} ${TRIMDIR} ${QCDIR1} ${QCDIR2} ${ALIGNMENTS} ${GENES} ${ISOFORMS} 
 
 ##Make copies of fastq files 
@@ -72,7 +79,7 @@ elapsed="$(($DATE2-$DATE1))"
 echo "Total of $elapsed seconds elapsed for trimming and alignment of sample $i"
 done;
 
-echo "Analyses are finished"
+echo "Analyses are finished yay!"
 
 ############ the end ##########
 
