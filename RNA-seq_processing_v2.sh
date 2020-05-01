@@ -4,8 +4,8 @@
 ###### Parameters set by user ####################
 
 ## Specify experiment details
-COMP="DOX"
-SPEC="human"
+COMP="5FU"
+SPEC="human2"
 CPU=30
 
 # Path to raw files 
@@ -48,13 +48,17 @@ SUFFIX_R2=_R1${SUFFIX}
 #########CHANGE HERE THE NAME OF THE FILE CONTAINING SAMPLES TO BE ANALYZED (I.E., SPREAD ACROSS MULTIPLE WINDOWS)##
 allfiles=`cat unique_files.txt`
 
+#### RUN QC1 ################
+cd ${RAWDIR}  
+echo "Running FastQC with samples"
+/share/tools/FastQC_v0.11.7/ *.fastq.gz -o ${QCDIR1}
 
 ##### RUNNING TRIMMING AND PIPING DIRECTLY INTO TO RSEM ######################## 
 echo "Trimming, alignment and quantification are starting..."
-FORWARD_P=_f_paired.fastq
-REVERSE_P=_r_paired.fastq
-FORWARD_U=_f_unpaired.fastq
-REVERSE_U=_r_unpaired.fastq
+FORWARD_P=_f_paired.fastq.gz
+REVERSE_P=_r_paired.fastq.gz
+FORWARD_U=_f_unpaired.fastq.gz
+REVERSE_U=_r_unpaired.fastq.gz
 GENESN=.genes.results
 ISOFORMSN=.isoforms.results
 ALIGNMENTSN=.transcript.bam
@@ -63,7 +67,7 @@ for i in $allfiles; do
 cd ${RAWDIR}
 echo "Trimming Sample $i"
 DATE1="$(date -u +%s)"
-java -Xms2G -Xmx3G -jar /share/tools/Trimmomatic-0.33/trimmomatic-0.33.jar PE -threads ${CPU} -phred33 $i${SUFFIX_R1} $i${SUFFIX_R2} ${TRIMDIR}$i${FORWARD_P}.gz ${TRIMDIR}$i${FORWARD_U}.gz ${TRIMDIR}$i${REVERSE_P}.gz ${TRIMDIR}$i${REVERSE_U}.gz ILLUMINACLIP:/share/tools/Trimmomatic-0.33/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36 HEADCROP:12
+java -Xms2G -Xmx3G -jar /share/tools/Trimmomatic-0.33/trimmomatic-0.33.jar PE -threads ${CPU} -phred33 $i${SUFFIX_R1} $i${SUFFIX_R2} ${TRIMDIR}$i${FORWARD_P} ${TRIMDIR}$i${FORWARD_U} ${TRIMDIR}$i${REVERSE_P} ${TRIMDIR}$i${REVERSE_U} ILLUMINACLIP:/share/tools/Trimmomatic-0.33/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
 cd ${TRIMDIR}
 gunzip -k $i*.gz
 echo "Starting alignment of sample $i"
