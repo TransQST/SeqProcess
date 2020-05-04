@@ -16,7 +16,7 @@ GENOMEDIR=${OUTDIR}Genome/hs_genome_bt1/
 GENOMEID="hs93"
 
 # Path to tools
-STAR_PATH=/home/tsouza/STAR-2.7.3a/source/STAR/
+#STAR_PATH=/home/tsouza/STAR-2.7.3a/source/STAR/
 RSEM_PATH=/share/tools/RSEM-1.3.1/
 
 #####################################################################################
@@ -69,7 +69,7 @@ java -Xms2G -Xmx3G -jar /share/tools/Trimmomatic-0.33/trimmomatic-0.33.jar PE -t
 cd ${TRIMDIR}
 gunzip -k $i*paired*.gz
 echo "Starting alignment of sample $i"
-/share/tools/RSEM-1.3.1/rsem-calculate-expression -p ${CPU} --bowtie-chunkmbs 1024 --bowtie-path /share/tools/bowtie-1.1.1/ --paired-end $i${FORWARD_P} $i${REVERSE_P} /ngs-data-2/analysis/TransQST/Genome/hs_genome_bt1/hs_93 $i >> $i.txt 2>&1
+/share/tools/RSEM-1.3.1/rsem-calculate-expression -p ${CPU} --bowtie-chunkmbs 1024 --bowtie-path /share/tools/bowtie-1.1.1/ --paired-end $i${FORWARD_P} $i${REVERSE_P} ${GENOMEDIR}${GENOMEID} $i >> $i.txt 2>&1
 mv $i${GENESN} ${GENES}
 mv $i${ISOFORMSN} ${ISOFORMS}
 mv $i${ALIGNMENTSN} ${ALIGNMENTS}
