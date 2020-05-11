@@ -16,7 +16,9 @@ TRANSCRIPTOME=/ngs-data-2/analysis/Genome/hs_genome_bt1/hs93
 
 # Path to tools
 #STAR_PATH=/home/tsouza/STAR-2.7.3a/source/STAR/
+TRIMMOMATIC_PATH=/share/tools/Trimmomatic-0.33/trimmomatic-0.33.jar
 RSEM_PATH=/share/tools/RSEM-1.3.1/
+BO_PATH=/share/tools/bowtie-1.1.1/
 
 #####################################################################################
 ###################################### START RUN ####################################
@@ -64,11 +66,11 @@ cd ${RAWDIR}
 #echo "QC of sample $i"
 #/share/tools/FastQC-0.11.7/fastqc $i* -o ${QCDIR}
 echo "Trimming Sample $i"
-java -Xms2G -Xmx3G -jar /share/tools/Trimmomatic-0.33/trimmomatic-0.33.jar PE -threads ${CPU} -phred33 ${RAWDIR}$i${SUFFIX_R1} ${RAWDIR}$i${SUFFIX_R2} ${TRIMDIR}$i${FORWARD_P}.gz ${TRIMDIR}$i${FORWARD_U}.gz ${TRIMDIR}$i${REVERSE_P}.gz ${TRIMDIR}$i${REVERSE_U}.gz ILLUMINACLIP:/share/tools/Trimmomatic-0.33/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36 HEADCROP:12
+java -Xms2G -Xmx3G -jar ${TRIMMOMATIC_PATH} PE -threads ${CPU} -phred33 ${RAWDIR}$i${SUFFIX_R1} ${RAWDIR}$i${SUFFIX_R2} ${TRIMDIR}$i${FORWARD_P}.gz ${TRIMDIR}$i${FORWARD_U}.gz ${TRIMDIR}$i${REVERSE_P}.gz ${TRIMDIR}$i${REVERSE_U}.gz ILLUMINACLIP:/share/tools/Trimmomatic-0.33/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36 HEADCROP:12
 cd ${TRIMDIR}
 gunzip -k $i*paired*.gz
 echo "Starting alignment of sample $i"
-/share/tools/RSEM-1.3.1/rsem-calculate-expression -p ${CPU} --bowtie-chunkmbs 1024 --bowtie-path /share/tools/bowtie-1.1.1/ --paired-end $i${FORWARD_P} $i${REVERSE_P} ${TRANSCRIPTOME} $i >> $i.txt 2>&1
+${RSEM_PATH}rsem-calculate-expression -p ${CPU} --bowtie-chunkmbs 1024 --bowtie-path ${BO_PATH} --paired-end $i${FORWARD_P} $i${REVERSE_P} ${TRANSCRIPTOME} $i >> $i.txt 2>&1
 mv $i${GENESN} ${GENES}
 mv $i${ISOFORMSN} ${ISOFORMS}
 mv $i${ALIGNMENTSN} ${ALIGNMENTS}
